@@ -34,21 +34,33 @@ void merge(int arr[], int left, int mid, int right);
 
 int main() {
     int n;
+    printf("Ingrese el tamaño de n: ");
     scanf("%d", &n);  // Leer el número de arreglos
 
     int total = n * n;  
     int *arr = (int *)malloc(total * sizeof(int));
 
     // Leer n arreglos de tamaño n
-    for (int i = 0; i < total; i++) {
-        scanf("%d", &arr[i]);
+    for (int i = 0; i < n; i++) {
+        printf("Ingrese los elementos del arreglo %d:\n", i + 1);
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &arr[i * n + j]);
+        }
     }
 
     // Ordenar usando merge sort
     mergeSort(arr, 0, total - 1);
 
-    // Imprimir el arreglo ordenado
+    int duplicado = 0;
     for (int i = 0; i < total; i++) {
+        if (i == 0 || arr[i] != arr[i - 1]) {
+            arr[duplicado++] = arr[i];
+        }
+    }
+
+    // Imprimir el arreglo ordenado
+    printf("Arreglo ordenado: ");
+    for (int i = 0; i < duplicado; i++) {
         printf("%d ", arr[i]);
     }
     printf("\n");
@@ -57,12 +69,47 @@ int main() {
     return 0;
 }
 
-// ---- Implementa aquí tu función mergeSort ----
+// ---- Implementa mergeSort ----
 void mergeSort(int arr[], int left, int right) {
-    // TODO
+    if (left < right) {
+        int mitad = left + (right - left) / 2;
+        mergeSort(arr, left, mitad);
+        mergeSort(arr, mitad + 1, right);
+        merge(arr, left, mitad, right);
+    }
 }
 
-// ---- Implementa aquí tu función merge ----
-void merge(int arr[], int left, int mid, int right) {
-    // TODO
+// ---- Implementa merge ----
+void merge(int arr[], int left, int mitad, int right) {
+    int n1 = mitad - left + 1;
+    int n2 = right - mitad;
+
+    int *L = (int *)malloc(n1 * sizeof(int));
+    int *R = (int *)malloc(n2 * sizeof(int));
+
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[mitad + 1 + j];
+
+    int i = 0, j = 0, k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k++] = L[i++];
+        } else {
+            arr[k++] = R[j++];
+        }
+    }
+
+    while (i < n1) {
+        arr[k++] = L[i++];
+    }
+
+    while (j < n2) {
+        arr[k++] = R[j++];
+    }
+
+    free(L);
+    free(R);
 }
